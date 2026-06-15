@@ -1,0 +1,37 @@
+# === Исходный код и зависимости Go ===
+src/vendor/
+src/go.work
+src/go.work.sum
+
+# === Бинарники и сборка ===
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+src/tracker
+tracker-test
+
+# Игнорируем скопированную базу в src и любые другие локальные копии SQLite
+src/tracker.db
+*.db
+*.db-journal
+*.db-wal
+
+# === Логи и временные файлы ===
+*.log
+
+# === Конфиденциальные данные (Secrets / Environment) ===
+.env
+.env.local
+
+# === Системные файлы и кэш IDE ===
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+.DS_Store
+Thumbs.db
