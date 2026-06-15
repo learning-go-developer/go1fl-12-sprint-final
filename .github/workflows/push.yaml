@@ -30,6 +30,7 @@ jobs:
       # Запуск тестов из папки src
       - name: Run tests
         run: |
+          cp db/tracker.db src/
           cd src
           go test -v ./...
 
