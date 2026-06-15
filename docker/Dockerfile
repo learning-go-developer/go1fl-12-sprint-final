@@ -20,7 +20,7 @@ WORKDIR /app
 
 COPY --from=builder /app/tracker .
 
-# База теперь копируется корректно из корня контекста сборки
+# База теперь копируется корректно из корня контекста сборки из-за перемещения
 COPY db/tracker.db ./tracker.db
 
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
