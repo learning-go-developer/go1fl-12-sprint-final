@@ -56,8 +56,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_USERNAME }}/learning-go-tracker # Имя твоего репозитория на DockerHub
-          tags: |
+          images: ${{ secrets.DOCKER_USERNAME }}/go1fl-12-sprint-final
             type=semver,pattern={{version}}
             type=latest
 
