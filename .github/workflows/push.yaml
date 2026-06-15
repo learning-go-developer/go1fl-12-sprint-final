@@ -1,0 +1,74 @@
+name: Go Test and Docker Publish
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ] # Срабатывает на теги типа v1.0.0
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  # Первая job: проверка и тесты
+  test:
+    name: Lint and Test Go Code
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.6'
+          cache: true
+          cache-dependency-path: src/go.sum
+
+      # Если в проекте используются модули, подтягиваем зависимости
+      - name: Get dependencies
+        run: |
+          cd src
+          if [ -f go.mod ]; then go mod tidy; fi
+
+      # Запуск тестов из папки src
+      - name: Run tests
+        run: |
+          cp db/tracker.db src/
+          cd src
+          go test -v ./...
+
+  # Вторая job: сборка и пуш в DockerHub
+  build-and-push:
+    name: Build and Push Docker Image
+    needs: test # Ждем, пока пройдут тесты
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      # Авторизация в DockerHub через GitHub Secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_ACCESS_TOKEN }}
+
+      # Извлечение метаданных (тегов) для Docker
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_USERNAME }}/go1fl-12-sprint-final
+          tags:
+            type=semver,pattern={{version}}
+            type=latest
+
+      # Сборка и отправка образа
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
