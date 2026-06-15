@@ -20,6 +20,8 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: '1.25.6'
+          cache: true
+          cache-dependency-path: src/go.sum
 
       # Если в проекте используются модули, подтягиваем зависимости
       - name: Get dependencies
