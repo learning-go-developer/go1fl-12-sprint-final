@@ -12,3 +12,13 @@
 │   └── Dockerfile   # [Моя работа] Оптимизированный Multi-stage Dockerfile
 └── README.md        # [Моя работа] Документация к запуску
 ```
+
+для локального теста надо скопировать db из ее папки временно в src
+
+
+```bash
+# Запускаем сборку из корня проекта
+docker build -t learning-go-tracker:local -f docker/Dockerfile .
+# Запуск контейнера
+docker run -d -p 8080:8080 --name tracker-test learning-go-tracker:local
+```
